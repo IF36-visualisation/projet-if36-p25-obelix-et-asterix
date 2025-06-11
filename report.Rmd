@@ -4,10 +4,12 @@ subtitle: "Obelix et Asterix"
 author: "Membre: TAKAM TALLA Vigny Brayan, Arthur KAMGA, Chengxian ZHAO, Jianghao LIU"
 date: "2025-06-11"
 output:
-  html_document:
-    df_print: paged
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    toc: true
+    toc_depth: 2
   pdf_document: default
-  
 ---
 
 ## Introduction
