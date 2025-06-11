@@ -23,7 +23,7 @@ Dans le cadre de ce projet, nous avons travaillé avec **deux jeux de données d
 
 L’objectif est de **mener une exploration** sur les données. Nous avons voulu comprendre comment ces systèmes fonctionnent, ce qui génère du profit ou non, et peut-être découvrir des profils de clients, des tendances d’achat ou des produits phares.  
 
-## Structure et nature des données
+### Structure et nature des données
 
 ####  [Données Superstore](https://www.kaggle.com/datasets/aksha17/superstore-sales)
 
@@ -103,10 +103,11 @@ walmart_total<-walmart
 superstore_raw<- superstore
 ```
 
+## Exploration initiale des données et corrélations
 
-# Vue d’ensemble et corrélations entre variables
+### Vue d’ensemble et corrélations entre variables
 
-## Objectif
+#### Objectif
 
 Avant de répondre aux différentes questions d’analyse, il est utile de commencer par une **vue d’ensemble** des jeux de données, afin de :
 
@@ -118,7 +119,7 @@ Nous utilisons ici deux jeux de données :
 - `Superstore` (ventes inter-entreprises B2B)
 - `Walmart` (ventes aux particuliers B2C)
 
-# Vue d'ensemble des deux jeu de données
+### Vue d'ensemble des deux jeu de données
 ```{r echo=FALSE, warning=FALSE}
 
 # Corrélation Walmart
@@ -211,13 +212,15 @@ plot2 <- ggplot(superstore, aes(x = Segment, y = Sales, fill = Segment)) +
   plot_layout(widths = c(1, 2))
 ```
 
-### Analyse du premier graphique :
+### Analyse
 
-En observant les dépenses par genre, on remarque que les femmes ont tendance à dépenser légèrement plus que les hommes, bien que la dispersion des dépenses soit assez similaire entre les deux groupes. Il y a également plusieurs points aberrants, ce qui suggère qu'il existe des clients ayant des dépenses particulièrement élevées dans les deux catégories. Cette différence de dépenses entre les genres semble donc présente, bien que limitée. Cependant, cela soulève une question intéressante : Quel rôle pourrait jouer le type de produit acheté dans ces écarts de dépenses ?
+En analysant les ventes selon le genre des clients (Walmart) et selon le segment de clientèle (Superstore), on observe plusieurs tendances intéressantes.
 
-### Analyse du deuxième graphique :
+D’une part, les femmes semblent dépenser légèrement plus que les hommes, bien que la dispersion des dépenses soit relativement similaire entre les deux groupes. On remarque également plusieurs points aberrants dans les deux catégories, suggérant l’existence de clients ayant des comportements d’achat particulièrement élevés. Cela soulève des questions sur l’influence potentielle d’autres facteurs, comme le type de produit acheté, sur ces écarts de dépenses.
 
-Pour le graphique des ventes par segment, on remarque que les médianes sont assez proches entre les segments "Consumer", "Corporate" et "Home Office". Cependant, la distribution des ventes est assez similaire pour tous les segments, avec une forte présence de points aberrants vers le haut. Le segment "Consumer" semble légèrement en tête, générant davantage de ventes élevées que les autres. Cela dit, les différences entre les segments ne sont pas énormes.
+D’autre part, en observant les ventes selon le segment de clientèle (Consumer, Corporate, Home Office), on note que les médianes sont proches, ce qui indique une répartition relativement équilibrée. Toutefois, le segment "Consumer" semble générer un peu plus de ventes élevées, avec une concentration légèrement supérieure de valeurs extrêmes. Globalement, la distribution des ventes reste assez similaire entre les trois segments, sans écart majeur.
+
+Ces premières observations suggèrent donc que ni le genre ni le segment ne constituent à eux seuls des facteurs décisifs, mais ils peuvent jouer un rôle complémentaire dans certaines tendances d’achat.
 
 ### Question : Quels produits sont beaucoup achetés ?
 
@@ -553,17 +556,17 @@ Si les produits plus chers avaient tendance à être mieux notés, les points se
 De plus, nous avons remarqué une observation intéressante : quelle que soit la valeur du prix unitaire, la note attribuée est toujours supérieure ou égale à 4.
 
 
-# Question 8 : Est-ce qu’un long délai de livraison fait perdre de l’argent ?
+## Question 8 : Est-ce qu’un long délai de livraison fait perdre de l’argent ?
 
 **Données utilisées** : `Ship Date`, `Order Date`, `Profit` (Superstore)
 
-## Méthode
+### Méthode
 
 Nous cherchons à savoir si les délais de livraison ont un impact sur le profit généré par une vente. Autrement dit, est-ce que livrer plus lentement fait perdre de l'argent à l'entreprise ?
 
 Nous pensons que plus le délai entre commande et expédition est long, plus cela engendre des coûts supplémentaires, ce qui pourrait réduire le profit. Nous allons visualiser cette relation à l’aide d’un nuage de points accompagné d’une courbe de tendance linéaire.
 
-## Visualisation : Délai de livraison vs Profit
+### Visualisation : Délai de livraison vs Profit
 
 ```{r echo=FALSE}
 library(lubridate)
@@ -697,18 +700,18 @@ D’après le diagramme en barres, on peut clairement observer que les ventes du
 
 Cela m’a fait penser au cours Éthique et biais de visualisation : comme les tranches horaires du champ time_of_day sont déjà prédéfinies dans le jeu de données, nous ne connaissons pas la répartition exacte des heures. Il est donc possible que, si l’intervalle de l’après-midi avait été légèrement élargi lors de la collecte des données, cela aurait pu inverser les résultats et faire apparaître l’après-midi comme la période la plus rentable. Ce constat est assez intéressant.
 
-# Question 12 : Quels États font le plus de ventes ?
+## Question 12 : Quels États font le plus de ventes ?
 
 **Données utilisées** : `State`, `Sales` (Superstore)
 
-## Méthode
+### Méthode
 
 Nous voulons identifier les régions géographiques les plus actives commercialement, en mesurant la valeur totale des ventes par État dans le jeu de données Superstore.
 
 Nous supposons que certains États génèrent beaucoup plus de ventes que d'autres, possiblement en raison de leur population, leur pouvoir d'achat ou leur position géographique stratégique. Une représentation en barplot des ventes totales par État nous permettra de visualiser cette répartition.
 
 
-## Visualisation : Ventes par État
+### Visualisation : Ventes par État
 
 ```{r echo=FALSE}
 state_sales <- superstore %>%
@@ -969,7 +972,7 @@ ggplot(data_superStore, aes(x = Discount, y = Quantity)) +
 Les parcelles de dispersion montrent que la plupart des transactions sont effectuées à faible remise et que le nombre d'achats est généralement stable. Le nombre de ventes dans différentes remises est essentiellement la distribution d'évaluation.En d'autres termes, dans cet ensemble de données, les remises ne semblent pas encourager clairement les clients à acheter plus.
 
 
-# Question 19 : Est-ce que les gens notent mieux s’ils paient plus ?
+## Question 19 : Est-ce que les gens notent mieux s’ils paient plus ?
 
 **Données utilisées** : `rating`, `total` (Walmart)
 
@@ -977,7 +980,7 @@ Nous voulons savoir s’il existe une relation entre le montant dépensé par un
 
 Nous émettons l’hypothèse que payer plus pourrait être associé à une meilleure satisfaction, car le client peut percevoir une meilleure qualité de service ou de produit. Nous analyserons cela via un nuage de points avec courbe de tendance linéaire.
 
-## Visualisation : Total payé vs Note client
+### Visualisation : Total payé vs Note client
 
 ```{r echo=FALSE}
 
