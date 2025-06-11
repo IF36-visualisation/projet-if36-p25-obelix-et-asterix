@@ -410,19 +410,11 @@ Pour valider ou invalider cette intuition, nous avons décidé de suivre une dé
 
 **Méthode**
 
-Pour répondre à cette question, nous exploitons le jeu de données **Superstore**, qui contient deux variables clés :  
-- `Discount` : le taux de remise appliqué sur chaque vente (entre 0% et 80%).  
-- `Profit` : le bénéfice réalisé sur chaque vente.  
+1. Analyse exploratoire initiale :  Nous utilisons d'abord un scatter plot combiné à une courbe de régression linéaire pour observer la tendance globale entre le taux de remise et le profit.
 
-Notre approche comporte plusieurs étapes :
+2. Approfondissement avec une analyse catégorielle :  Afin d'aller plus loin et mieux comprendre l'impact des différents niveaux de remise, nous introduisons un boxplot par groupe de taux de remise.
 
-1. **Analyse exploratoire initiale** :  
-   Nous utilisons d'abord un scatter plot combiné à une courbe de régression linéaire pour observer la tendance globale entre le taux de remise et le profit.
-
-2. **Approfondissement avec une analyse catégorielle** :  
-   Afin d'aller plus loin et mieux comprendre l'impact des différents niveaux de remise, nous introduisons un boxplot par groupe de taux de remise.
-
-**Pourquoi utiliser également un boxplot ?**  
+Pourquoi utiliser également un boxplot ?  
 - Le boxplot nous permet d'analyser plus précisément la distribution du profit dans chaque catégorie de remise, en visualisant la médiane, les quartiles et les valeurs atypiques.  
 - Cela apporte une vision plus claire et comparative entre les différents niveaux de remise.
 
@@ -481,37 +473,16 @@ ggplot(superstore_clean, aes(x = Discount_Group, y = Profit, fill = Discount_Gro
 
 **Analyse**
 
-**Avec le scatter plot :**
+Les deux graphiques montrent un lien clair entre le taux de remise et le profit.
 
-- Nous observons une tendance globale légèrement négative entre le taux de remise et le profit.
-- Plus la remise augmente, plus les profits tendent à baisser.
+Scatter plot : il révèle une tendance globale négative — plus la remise est élevée, plus le profit diminue.
 
-**Avec le boxplot :**
+Boxplot : il précise cette relation. Jusqu’à 20 %, les profits sont majoritairement positifs. Entre 20 % et 40 %, la rentabilité chute. Au-delà de 40 %, la médiane devient négative et la variabilité augmente fortement.
 
-- La **structure des données** devient beaucoup plus claire.
-- Jusqu'à **20% de remise**, les profits restent majoritairement positifs.
-- Dès que la remise dépasse **40%**, la médiane du profit devient négative.
-- Nous constatons également que la variabilité augmente fortement avec les remises élevées.
+Différences entre les deux graphiques
+Le scatter plot aide à voir la tendance générale.
 
-**Différence entre Scatter plot et Boxplot pour ce problème :**
-
-- Le **scatter plot** nous a permis d'observer une tendance générale.
-- Le **boxplot** nous permet de **comparer plus précisément les profits** selon différents niveaux de remise, en mettant en évidence :
-  - Les tendances centrales (**médiane**)
-  - La dispersion (**écart interquartile**)
-
-
-**Conclusion**
-
-- Sans remise ou avec une remise légère (**0%-20%**), les ventes restent globalement rentables.
-- Dès que la remise atteint **20%-40%**, la rentabilité diminue visiblement.
-- Pour des remises supérieures à **40%**, les pertes deviennent la norme dans la majorité des cas.
-
-Notre analyse montre que :
-
-- Accorder une réduction importante n'assure pas un profit ; au contraire, cela augmente considérablement le risque de pertes.
-- Le **scatter plot** nous a permis d'identifier une tendance générale.
-- Le **boxplot** a confirmé et précisé que les remises élevées entraînent majoritairement des profits négatifs.
+Le boxplot permet de comparer finement les niveaux de remise, en mettant en évidence la médiane, la dispersion et les valeurs extrêmes.
 </details>
 
 
