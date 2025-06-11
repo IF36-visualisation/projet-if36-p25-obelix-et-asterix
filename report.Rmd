@@ -2,15 +2,52 @@
 title: 'Analyse croisée : Superstore & Walmart'
 subtitle: "Obelix et Asterix"
 author: "Membre: TAKAM TALLA Vigny Brayan, Arthur KAMGA, Chengxian ZHAO, Jianghao LIU"
-date: "2025-06-11"
+date: "2025-04-27"
 output:
   prettydoc::html_pretty:
-    theme: cayman
+    theme: HPSTR
     highlight: github
-    toc: true
-    toc_depth: 2
-  pdf_document: default
 ---
+
+<style>
+summary {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 12px 16px;
+  background: linear-gradient(to right, #0072B5, #009E73); /* même style que la bannière */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin: 20px 0 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease;
+}
+
+details[open] summary {
+  background: linear-gradient(to right, #009E73, #0072B5);
+}
+
+details {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+details strong {
+  font-size: 17px;
+  color: #007250; /* vert foncé harmonieux */
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+</style>
+
+
+
 
 ## Introduction
 
@@ -23,7 +60,7 @@ Dans le cadre de ce projet, nous avons travaillé avec **deux jeux de données d
 
 L’objectif est de **mener une exploration** sur les données. Nous avons voulu comprendre comment ces systèmes fonctionnent, ce qui génère du profit ou non, et peut-être découvrir des profils de clients, des tendances d’achat ou des produits phares.  
 
-### Structure et nature des données
+## Structure et nature des données
 
 ####  [Données Superstore](https://www.kaggle.com/datasets/aksha17/superstore-sales)
 
@@ -103,11 +140,10 @@ walmart_total<-walmart
 superstore_raw<- superstore
 ```
 
-## Exploration initiale des données et corrélations
 
-### Vue d’ensemble et corrélations entre variables
+# Vue d’ensemble et corrélations entre variables
 
-#### Objectif
+## Objectif
 
 Avant de répondre aux différentes questions d’analyse, il est utile de commencer par une **vue d’ensemble** des jeux de données, afin de :
 
@@ -119,7 +155,7 @@ Nous utilisons ici deux jeux de données :
 - `Superstore` (ventes inter-entreprises B2B)
 - `Walmart` (ventes aux particuliers B2C)
 
-### Vue d'ensemble des deux jeu de données
+# Vue d'ensemble des deux jeu de données
 ```{r echo=FALSE, warning=FALSE}
 
 # Corrélation Walmart
@@ -149,7 +185,9 @@ ggcorrplot(cor_superstore, lab = TRUE, title = "Corrélation entre variables num
 - Une valeur proche de 0 montre peu ou pas de relation.
 
 
-## Question 1
+<details> 
+<summary><strong> Question 1
+</strong></summary>
 
 1. Problématique
 
@@ -175,7 +213,7 @@ Concernant les segments, il est possible que les consommateurs génèrent plus d
 - Outliers (points rouges)
 - Médiane (trait central du boxplot)
 
-### Graphique 2 (à droite) :
+**Graphique 2 (à droite) :**
 
 - **Titre** : Montant des ventes par Segment (Superstore)
   
@@ -212,23 +250,25 @@ plot2 <- ggplot(superstore, aes(x = Segment, y = Sales, fill = Segment)) +
   plot_layout(widths = c(1, 2))
 ```
 
-### Analyse
+**Analyse du premier graphique :**
 
-En analysant les ventes selon le genre des clients (Walmart) et selon le segment de clientèle (Superstore), on observe plusieurs tendances intéressantes.
+En observant les dépenses par genre, on remarque que les femmes ont tendance à dépenser légèrement plus que les hommes, bien que la dispersion des dépenses soit assez similaire entre les deux groupes. Il y a également plusieurs points aberrants, ce qui suggère qu'il existe des clients ayant des dépenses particulièrement élevées dans les deux catégories. Cette différence de dépenses entre les genres semble donc présente, bien que limitée. Cependant, cela soulève une question intéressante : Quel rôle pourrait jouer le type de produit acheté dans ces écarts de dépenses ?
 
-D’une part, les femmes semblent dépenser légèrement plus que les hommes, bien que la dispersion des dépenses soit relativement similaire entre les deux groupes. On remarque également plusieurs points aberrants dans les deux catégories, suggérant l’existence de clients ayant des comportements d’achat particulièrement élevés. Cela soulève des questions sur l’influence potentielle d’autres facteurs, comme le type de produit acheté, sur ces écarts de dépenses.
+**Analyse du deuxième graphique :**
 
-D’autre part, en observant les ventes selon le segment de clientèle (Consumer, Corporate, Home Office), on note que les médianes sont proches, ce qui indique une répartition relativement équilibrée. Toutefois, le segment "Consumer" semble générer un peu plus de ventes élevées, avec une concentration légèrement supérieure de valeurs extrêmes. Globalement, la distribution des ventes reste assez similaire entre les trois segments, sans écart majeur.
+Pour le graphique des ventes par segment, on remarque que les médianes sont assez proches entre les segments "Consumer", "Corporate" et "Home Office". Cependant, la distribution des ventes est assez similaire pour tous les segments, avec une forte présence de points aberrants vers le haut. Le segment "Consumer" semble légèrement en tête, générant davantage de ventes élevées que les autres. Cela dit, les différences entre les segments ne sont pas énormes.
+</details>
 
-Ces premières observations suggèrent donc que ni le genre ni le segment ne constituent à eux seuls des facteurs décisifs, mais ils peuvent jouer un rôle complémentaire dans certaines tendances d’achat.
 
-### Question : Quels produits sont beaucoup achetés ?
+<details> 
+<summary><strong> Question : Quels produits sont beaucoup achetés ?
+</strong></summary>
 
 **Données utilisées** : `product_line` et `quantity` (jeu de données Walmart)
 
 ---
 
-### Méthode
+**Méthode**
 
 Pour répondre on a:
 
@@ -239,7 +279,7 @@ Pour répondre on a:
 
 ---
 
-### Visualisation : Produits les plus achetés
+**Visualisation : Produits les plus achetés**
 
 ```{r, echo = FALSE}
 library(dplyr)
@@ -258,12 +298,22 @@ ggplot(produits_walmart, aes(x = reorder(product_line, Total_Quantity), y = Tota
        y = "Quantité totale achetée") +
   theme_minimal()
 ```
+</details>
 
-## Question 2: Est-ce que certains jours génèrent plus de ventes que d'autres ?
 
-Pour répondre à cette question, nous allons étudié deux jeux de données : Superstore, qui concerne les ventes entre entreprises (B2B), et Walmart, qui concerne les ventes aux particuliers (B2C). L'approche a utilisé se structure de la manière suivante : d'abord, nous allons extraire le jour de la semaine à partir de la date de chaque commande. Ensuite, nous allons additionner les ventes totales pour chaque jour. Enfin, nous allons représenter ces résultats sous forme de graphiques en barres (barplots). Nous espérons obtenir après cette analyse, qu'il y aura: une activité principalement concentrée dans la semaine pour Superstore, et des ventes plus élevées le week-end pour Walmart
+<details> 
+<summary><strong>Question 2: Est-ce que certains jours génèrent plus de ventes que d'autres ?
+</strong></summary>
 
-### Superstore - Ventes par jour de la semaine
+Nous souhaitons comprendre si certains jours de la semaine influencent le volume de ventes. Pour cela, nous analysons deux jeux de données : Superstore, qui concerne les ventes entre entreprises (B2B), et Walmart, qui concerne les ventes aux particuliers (B2C). L’objectif est d’identifier des tendances journalières dans le comportement d’achat.
+
+Nous faisons l’hypothèse suivante :
+
+- Pour Superstore, les ventes seront majoritairement concentrées en semaine, car les commandes inter-entreprises se font généralement pendant les jours ouvrés.
+
+- Pour Walmart, les ventes seront plus élevées le week-end, car les particuliers ont davantage de temps libre pour faire leurs achats.
+
+**Superstore - Ventes par jour de la semaine**
 ```{r, echo = FALSE}
 superstore <- superstore %>%
   mutate(Order_Date = as.Date(`Order Date`, format="%d-%m-%y"),
@@ -274,19 +324,16 @@ superstore <- superstore %>%
 superstore$DayOfWeek <- factor(superstore$DayOfWeek,
                                levels = c("lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"))
 
-ggplot(superstore, aes(x = DayOfWeek, y = Total_Sales)) +
-  geom_col(fill="steelblue") +
-  geom_text(aes(label = round(Total_Sales, 0)), vjust = -0.5) +
-  labs(title = "Superstore : Ventes par jour de la semaine", x = "Jour", y = "Ventes ($)") +
+ggplot(superstore, aes(x = DayOfWeek, y = Total_Sales, group = 1)) +
+  geom_line(color = "steelblue", linewidth = 1.2) +  # 🔁 ici, on remplace size par linewidth
+  geom_point(color = "darkblue", size = 3) +
+  geom_text(aes(label = round(Total_Sales, 0)), vjust = -1) +
+  labs(title = "Superstore : Évolution des ventes par jour",
+       x = "Jour", y = "Ventes ($)") +
   theme_minimal()
 ```
 
-### Analyse
-
-On constate sur le graphique que: le mercredi, il y a très peu de ventes, le lundi et le vendredi il y a plus de vente. Cela s’explique premièrement par le fait que Superstore vend principalement à des entreprises. Ensuite, nous pouvons dire après avoir analyser et effectuer des recherches que: le lundi, les entreprises passent beaucoup de commandes pour bien commencer leur semaine. Le vendredi, elles commandent à nouveau pour préparer la semaine suivante. En revanche, le mercredi, tout est déjà organisé, donc il y a naturellement moins de commandes. Le samedi et le dimanche, il y a aussi des ventes, mais un peu moins qu’en début et en fin de semaine.
-
-
-### Walmart - Ventes par jour de la semaine
+**Walmart - Ventes par jour de la semaine**
 
 ```{r, echo = FALSE}
 
@@ -301,21 +348,57 @@ walmart <- walmart %>%
 walmart$DayOfWeek <- factor(walmart$DayOfWeek,
                             levels = c("lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"))
 
-ggplot(walmart, aes(x = DayOfWeek, y = Total_Sales)) +
-  geom_col(fill="darkgreen") +
-  geom_text(aes(label = round(Total_Sales, 0)), vjust = -0.5) +
-  labs(title = "Walmart : Ventes par jour de la semaine", x = "Jour", y = "Ventes ($)") +
+ggplot(walmart, aes(x = DayOfWeek, y = Total_Sales, group = 1)) +
+  geom_line(color = "darkgreen", linewidth = 1.2) +  # Remplace `size` par `linewidth`
+  geom_point(color = "forestgreen", size = 3) +
+  geom_text(aes(label = round(Total_Sales, 0)), vjust = -1) +
+  labs(title = "Walmart : Évolution des ventes par jour de la semaine",
+       x = "Jour", y = "Ventes ($)") +
   theme_minimal()
 ```
+**Analyse**
 
-### Analyse
-On constate sur le graphique que: le samedi, les gens achètent beaucoup plus que les autres jours. Le dimanche aussi, les ventes restent assez élevées, mais elles sont un peu moins importantes qu'au samedi. En semaine, du lundi au vendredi, les ventes sont plus régulières mais globalement plus faibles que le week-end. Nous pouvons dire après avoir analyser et effectuer des recherches que cela s'explique par le fait que : pendant la semaine, les gens sont souvent occupés par leur travail ou l'école, et ils ont donc moins de temps pour faire leurs courses. Le samedi, en revanche, ils disposent de plus de temps libre, ce qui leur permet d'acheter davantage.
+En observant les graphiques des ventes par jour de la semaine, plusieurs constats se dégagent pour les deux jeux de données :
+
+**Superstore**
+
+- Lundi et vendredi affichent les plus hauts niveaux de ventes, dépassant les 420 000 $.
+
+- Mercredi est le jour le plus faible, avec un volume de ventes nettement en dessous des autres jours.
+
+- Samedi et dimanche présentent aussi des montants élevés, mais légèrement inférieurs à ceux du lundi et du vendredi.
+
+Interprétation :
+
+- Superstore vend principalement à des entreprises (B2B).
+
+- Les commandes sont fortes en début de semaine (lundi) pour anticiper l’activité, et en fin de semaine (vendredi) pour se préparer à la suivante.
+
+- Mercredi marque un creux logique : la majorité des besoins ont déjà été couverts.
+
+**Walmart**
+
+- Samedi est le jour où les ventes sont les plus élevées, suivi par mardi.
+
+- Dimanche reste aussi assez élevé, bien que légèrement en dessous du samedi.
+
+- Lundi à vendredi, les ventes sont relativement stables mais plus basses que le week-end.
+
+Interprétation :
+
+- Walmart vend aux particuliers (B2C).
+
+- Les gens achètent plus le week-end : ils ont plus de temps libre pour faire leurs courses.
+
+- En semaine, les ventes sont plus faibles, car les clients sont occupés par le travail ou l’école.
+</details>
 
 
-## Question 3 : Est-ce qu’une réduction fait toujours gagner de l’argent ?
+<details> 
+<summary><strong>Question 3 : Est-ce qu’une réduction fait toujours gagner de l’argent ?
+</strong></summary>
 
-
-### Réflexion initiale
+**Réflexion initiale**
 
 Nous nous sommes posé la question suivante : **Accorder une remise sur une vente assure-t-il toujours un bénéfice ?**  
 Intuitivement, nous avons supposé que si la remise est modérée, elle pourrait stimuler les ventes sans trop impacter le profit ; mais qu'une remise trop importante risquerait au contraire de générer des pertes.
@@ -325,7 +408,7 @@ Pour valider ou invalider cette intuition, nous avons décidé de suivre une dé
 - Approfondir l'analyse en étudiant la distribution du profit pour différents niveaux de remise.
 
 
-### Méthode
+**Méthode**
 
 Pour répondre à cette question, nous exploitons le jeu de données **Superstore**, qui contient deux variables clés :  
 - `Discount` : le taux de remise appliqué sur chaque vente (entre 0% et 80%).  
@@ -344,9 +427,9 @@ Notre approche comporte plusieurs étapes :
 - Cela apporte une vision plus claire et comparative entre les différents niveaux de remise.
 
 
-### Visualisation
+**Visualisation**
 
-#### Partie 1 - Scatter plot : Discount vs Profit
+**Partie 1 - Scatter plot : Discount vs Profit**
 
 ```{r message=FALSE, echo = FALSE}
 library(ggplot2)
@@ -367,7 +450,7 @@ ggplot(superstore, aes(x = Discount, y = Profit)) +
 ```
 
 
-#### Partie 2 - Boxplot : Profit par groupe de Discount
+**Partie 2 - Boxplot : Profit par groupe de Discount**
 
 ```{r, echo = FALSE}
 # Nettoyer les données
@@ -396,21 +479,21 @@ ggplot(superstore_clean, aes(x = Discount_Group, y = Profit, fill = Discount_Gro
 
 
 
-### Analyse
+**Analyse**
 
-#### Avec le scatter plot :
+**Avec le scatter plot :**
 
 - Nous observons une tendance globale légèrement négative entre le taux de remise et le profit.
 - Plus la remise augmente, plus les profits tendent à baisser.
 
-#### Avec le boxplot :
+**Avec le boxplot :**
 
 - La **structure des données** devient beaucoup plus claire.
 - Jusqu'à **20% de remise**, les profits restent majoritairement positifs.
 - Dès que la remise dépasse **40%**, la médiane du profit devient négative.
 - Nous constatons également que la variabilité augmente fortement avec les remises élevées.
 
-#### Différence entre Scatter plot et Boxplot pour ce problème :
+**Différence entre Scatter plot et Boxplot pour ce problème :**
 
 - Le **scatter plot** nous a permis d'observer une tendance générale.
 - Le **boxplot** nous permet de **comparer plus précisément les profits** selon différents niveaux de remise, en mettant en évidence :
@@ -418,7 +501,7 @@ ggplot(superstore_clean, aes(x = Discount_Group, y = Profit, fill = Discount_Gro
   - La dispersion (**écart interquartile**)
 
 
-### Conclusion
+**Conclusion**
 
 - Sans remise ou avec une remise légère (**0%-20%**), les ventes restent globalement rentables.
 - Dès que la remise atteint **20%-40%**, la rentabilité diminue visiblement.
@@ -429,20 +512,23 @@ Notre analyse montre que :
 - Accorder une réduction importante n'assure pas un profit ; au contraire, cela augmente considérablement le risque de pertes.
 - Le **scatter plot** nous a permis d'identifier une tendance générale.
 - Le **boxplot** a confirmé et précisé que les remises élevées entraînent majoritairement des profits négatifs.
+</details>
 
 
-## Question 4 :Quels produits rapportent le plus ?
+<details> 
+<summary><strong>Question 4 :Quels produits rapportent le plus ?
+</strong></summary>
 
-### Méthode
+**Méthode**
 
 Pour répondre à cette question,Nous nous concentrerons principalement sur deux paramètres : 
 **product_line** : ce paramètre nous informe sur le type de produit, et **gross_income** : ce paramètre nous indique le bénéfice généré par le produit.
 
 Nous utiliserons un diagramme en barres pour analyser les données, car les catégories de produits possèdent plusieurs étiquettes différentes, tandis que le revenu des produits est une valeur unique. Après avoir trié les données, la comparaison entre les produits sera également plus intuitive.
 
-### Visualisation
+**Visualisation**
 
-#### Bar chart: product_line et gross_income
+**Bar chart: product_line et gross_income**
 
 ```{r message=FALSE, echo = FALSE}
 library(dplyr)
@@ -476,18 +562,21 @@ ggplot(result, aes(x = reorder(product_line, total_gross_income), y = total_gros
 ```
 
 
-### Résultat et Conclusion
+**Résultat et Conclusion**
 
 Nous pouvons observer que les produits du supermarché Walmart sont répartis en six catégories. Parmi celles-ci, la vente de food and beverages génère le bénéfice le plus élevé, tandis que health and beauty génère le bénéfice le plus faible.
 Toutefois, il est important de noter que l'écart entre eux n'est pas très important. Pour certains produits, la différence de bénéfices ne dépasse même pas 2%. De plus, tous les bénéfices dépassent 2000 dollars. Étant donné que les données collectées peuvent être influencées par le contexte social et d'autres facteurs à l'époque, nous pouvons conclure qu'au premier trimestre de 2019, la vente de food and beverages générait les bénéfices les plus élevés.
+</details>
 
 
-## Question 5 : Quelles catégories perdent de l’argent avec les réductions ?
+<details> 
+<summary><strong>Question 5 : Quelles catégories perdent de l’argent avec les réductions ?
+</strong></summary>
 
 Pour répondre à cette question, nous allons utiliser le dataset Superstore, qui contient des informations sur les remises, profits et catégories de produits.
 Nous chercherons à analyser l'effet des niveaux de remise sur le profit moyen par catégorie, afin d’identifier celles qui deviennent non rentables lorsque des réductions sont appliquées.
 
-### Visualisation
+**Visualisation**
 
 ```{r message=FALSE, warning=FALSE, echo = FALSE}
 # Nettoyage des données : s'assurer qu'il n'y a pas de NA dans les variables clés
@@ -517,7 +606,8 @@ ggplot(profit_by_discount, aes(x = remise, y = profit_moyen, fill = Category)) +
   theme_minimal()
 ```
 
-### Analyse
+**Analyse**
+
 On observe que toutes les catégories deviennent non rentables lorsque la remise dépasse 40%. En particulier, la catégorie Technology affiche une perte moyenne très importante, proche de -800.
 
 La catégorie Furniture enregistre également des pertes dès le niveau de 20–40% de remise, avec un profit moyen négatif.
@@ -525,20 +615,23 @@ La catégorie Furniture enregistre également des pertes dès le niveau de 20–
 En revanche, des remises plus faibles (entre 0 et 20%) restent généralement rentables pour toutes les catégories, notamment Technology, qui affiche un profit moyen positif dans cette tranche.
 
 Cela suggère que les remises élevées (> 40%) sont globalement désavantageuses, et que leur impact varie fortement selon la catégorie de produit.
+</details>
 
 
-## Question 6 :Les choses chères sont-elles mieux notées ?
+<details> 
+<summary><strong>Question 6 :Les choses chères sont-elles mieux notées ?
+</strong></summary>
 
-### Méthode
+**Méthode**
 
 Pour répondre à cette question, nous nous concentrerons principalement sur deux paramètres : 
 **unit_price** : ce paramètre indique le prix unitaire des produits, et **rating** : ce paramètre reflète la satisfaction des clients à travers leur évaluation.
 
 Nous utiliserons un diagramme de dispersion pour analyser les données. Bien que le prix et la note soient des variables numériques, ils peuvent être considérés comme discrétisables afin de mieux visualiser leur relation. En observant la distribution des points, nous pourrons déterminer s’il existe une tendance entre le prix et la note, par exemple si les produits plus chers sont mieux notés ou s’il n’y a pas de lien clair.
 
-### Visualisation
+**Visualisation**
 
-#### Scatter: Unit_price et rating
+**Scatter: Unit_price et rating**
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 ggplot(data, aes(x = unit_price, y = rating)) +
@@ -550,23 +643,24 @@ ggplot(data, aes(x = unit_price, y = rating)) +
 ```
 
 
-### Résultat et Conclusion
+**Résultat et Conclusion**
 
 Si les produits plus chers avaient tendance à être mieux notés, les points seraient approximativement alignés en bande sur le graphique. Cependant, en observant le nuage de points, on constate que les données sont réparties de manière assez uniforme et désordonnée sur l'ensemble du graphique. On peut donc conclure qu’il n’existe pas de relation directe entre le prix unitaire et la note.
 De plus, nous avons remarqué une observation intéressante : quelle que soit la valeur du prix unitaire, la note attribuée est toujours supérieure ou égale à 4.
+</details>
 
 
-## Question 8 : Est-ce qu’un long délai de livraison fait perdre de l’argent ?
+<details> 
+<summary><strong>Question 8 : Est-ce qu’un long délai de livraison fait perdre de l’argent ?
+</strong></summary>
 
-**Données utilisées** : `Ship Date`, `Order Date`, `Profit` (Superstore)
-
-### Méthode
+**Méthode**
 
 Nous cherchons à savoir si les délais de livraison ont un impact sur le profit généré par une vente. Autrement dit, est-ce que livrer plus lentement fait perdre de l'argent à l'entreprise ?
 
 Nous pensons que plus le délai entre commande et expédition est long, plus cela engendre des coûts supplémentaires, ce qui pourrait réduire le profit. Nous allons visualiser cette relation à l’aide d’un nuage de points accompagné d’une courbe de tendance linéaire.
 
-### Visualisation : Délai de livraison vs Profit
+**Visualisation : Délai de livraison vs Profit**
 
 ```{r echo=FALSE}
 library(lubridate)
@@ -589,7 +683,7 @@ ggplot(superstore, aes(x = factor(Delivery_Days), y = Profit)) +
 
 ```
 
-### Analyse
+**Analyse**
 
 À partir du graphique, on observe :
 
@@ -604,15 +698,17 @@ Interprétation :
 - Le délai de livraison ne semble pas avoir d’effet direct sur la rentabilité.
 
 - D’autres facteurs (comme les frais de port, la catégorie de produit ou la réduction) influencent probablement davantage le profit que la durée de livraison seule.
+</details>
 
 
-
-## Question 9 – Quelle catégorie a la plus grosse marge ?
+<details> 
+<summary><strong>Question 9 – Quelle catégorie a la plus grosse marge ?
+</strong></summary>
 
 Pour répondre à cette question, nous allons analyser le dataset **Superstore**, en nous concentrant sur la **marge bénéficiaire totale** (Profit) pour chaque **catégorie de produit**.  
 Nous allons visualiser la répartition des profits à l’aide d’un graphique circulaire (pie chart), afin d’identifier la catégorie la plus rentable.
 
-### Visualisation
+**Visualisation**
 
 ```{r message=FALSE, warning=FALSE, echo = FALSE}
 
@@ -642,7 +738,7 @@ ggplot(marge_par_categorie, aes(x = "", y = marge_totale, fill = Category)) +
 
 ```
 
-### Analyse
+**Analyse**
 Le graphique montre la répartition des marges (profits totaux) entre les trois catégories de produits.
 
 On observe que :
@@ -654,11 +750,14 @@ La catégorie Office Supplies arrive en deuxième position avec 42,8 % des marge
 En revanche, la catégorie Furniture ne représente que 6,4 % des marges totales, ce qui souligne une faible contribution au profit global de l’entreprise. Cette faible marge peut s’expliquer par une sensibilité plus forte aux remises ou des coûts plus élevés.
 
 En résumé, la technologie est le moteur principal de la rentabilité, tandis que le mobilier semble le moins performant sur le plan des marges.
+</details>
 
 
-## Question 10 :Quel moment de la journée rapporte le plus ?
+<details> 
+<summary><strong>Question 10 :Quel moment de la journée rapporte le plus ?
+</strong></summary>
 
-### Méthode
+**Méthode**
 
 Pour répondre à cette question, nous nous concentrerons principalement sur deux paramètres :
 **time_of_day** : ce paramètre indique le moment de la journée où l’achat a été effectué, et
@@ -667,9 +766,9 @@ Pour répondre à cette question, nous nous concentrerons principalement sur deu
 Nous allons utiliser le graphique en Dount Chart pour analyser les données, car il est plus facile de visualiser le pourcentage des revenus au fil du temps pour différentes périodes. En comparant le revenu total généré à chaque moment de la journée, nous serons en mesure d’identifier les périodes les plus rentables et ainsi déterminer quel moment de la journée rapporte le plus d’argent.
 
 
-### Visualisation
+**Visualisation**
 
-#### Bar chart: time_of_day et gross_income
+**Bar chart: time_of_day et gross_income**
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 
 income_by_time <- data %>%
@@ -693,25 +792,25 @@ ggplot(income_by_time, aes(x = 2, y = total_income, fill = time_of_day)) +
   theme(legend.title = element_blank())
 ```
 
-
-### Résultat et Conclusion
+**Résultat et Conclusion**
 
 D’après le diagramme en barres, on peut clairement observer que les ventes du matin génèrent le moins de bénéfices, suivies de l’après-midi, tandis que les ventes du soir rapportent le plus. De plus, les bénéfices du matin représentent moins de la moitié de ceux de l’après-midi, alors que la différence entre l’après-midi et le soir n’est pas très marquée.
 
 Cela m’a fait penser au cours Éthique et biais de visualisation : comme les tranches horaires du champ time_of_day sont déjà prédéfinies dans le jeu de données, nous ne connaissons pas la répartition exacte des heures. Il est donc possible que, si l’intervalle de l’après-midi avait été légèrement élargi lors de la collecte des données, cela aurait pu inverser les résultats et faire apparaître l’après-midi comme la période la plus rentable. Ce constat est assez intéressant.
+</details>
 
-## Question 12 : Quels États font le plus de ventes ?
 
-**Données utilisées** : `State`, `Sales` (Superstore)
+<details> 
+<summary><strong>Question 12 : Quels États font le plus de ventes ?
+</strong></summary>
 
-### Méthode
+**Méthode**
 
 Nous voulons identifier les régions géographiques les plus actives commercialement, en mesurant la valeur totale des ventes par État dans le jeu de données Superstore.
 
 Nous supposons que certains États génèrent beaucoup plus de ventes que d'autres, possiblement en raison de leur population, leur pouvoir d'achat ou leur position géographique stratégique. Une représentation en barplot des ventes totales par État nous permettra de visualiser cette répartition.
 
-
-### Visualisation : Ventes par État
+**Visualisation : Ventes par État**
 
 ```{r echo=FALSE}
 state_sales <- superstore %>%
@@ -728,7 +827,8 @@ ggplot(state_sales, aes(x = reorder(State, Total_Sales), y = Total_Sales)) +
   theme_minimal()
 ```
 
-### Analyse
+**Analyse**
+
 Le graphique met en évidence des écarts très marqués entre les États :
 
 - Californie est de loin l’État avec le plus grand volume de ventes, suivie par New York et Texas.
@@ -742,10 +842,14 @@ Interprétation :
 - Les États en tête sont généralement plus peuplés, plus riches ou plus densément urbanisés, ce qui favorise l’activité commerciale.
 
 - Cette concentration peut guider les décisions marketing ou logistiques (ciblage, stock, implantation de centres de distribution).
+</details>
 
-## Question 13 :Quelle région est la plus performante en termes de rentabilité ?
 
-### Méthode
+<details> 
+<summary><strong>Question 13 :Quelle région est la plus performante en termes de rentabilité ?
+</strong></summary>
+
+**Méthode**
 Pour cette analyse, nous avons utilisé le jeu de données Superstore, en nous concentrant sur trois variables clés :
 
 Region : la région géographique (East, West, South, Central)
@@ -772,7 +876,7 @@ La couleur reflète la marge bénéficiaire
 
 Un code couleur du rouge (moins rentable) au vert (plus rentable) facilite l’interprétation visuelle
 
-### Visualisation
+**Visualisation**
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 if (!requireNamespace("treemapify", quietly = TRUE)) {
@@ -812,7 +916,7 @@ ggplot(region_profitability,
 
 ```
 
-### Analyse
+**Analyse**
 La région West se démarque nettement avec la plus forte marge bénéficiaire : 14.9%.
 
 Elle est suivie par East (13.5%) et South (11.9%), qui présentent également une rentabilité raisonnable.
@@ -824,10 +928,14 @@ En termes de volume de ventes (taille des blocs), East et West ont des ventes pl
 Le treemap permet ici une visualisation doublement efficace : il nous montre où se réalisent les ventes et dans quelle mesure ces ventes sont profitables.
 
 Cette analyse suggère que pour maximiser la rentabilité, l’entreprise pourrait étudier les pratiques commerciales mises en œuvre dans la région West, et envisager des actions correctives dans la région Central.
+</details>
 
-## Question 15 :Est-ce que la façon de payer change le prix moyen ?
 
-### Méthode
+<details> 
+<summary><strong>Question 15 :Est-ce que la façon de payer change le prix moyen ?
+</strong></summary>
+
+**Méthode**
 
 Pour répondre à cette question, nous allons nous concentrer sur deux paramètres :
 
@@ -838,9 +946,9 @@ Pour répondre à cette question, nous allons nous concentrer sur deux paramètr
 Nous allons utiliser un diagramme en boîte (boxplot) pour visualiser la distribution des montants en fonction des différentes méthodes de paiement. Le boxplot permet de représenter de manière claire la médiane, les quartiles ainsi que les valeurs aberrantes, ce qui nous aide à déterminer si certains moyens de paiement sont associés à des niveaux de dépenses différents, et donc si la méthode de paiement a une influence sur le montant payé par les clients.
 
 
-### Visualisation
+**Visualisation**
 
-#### Boxplot: payment_method et total
+**Boxplot: payment_method et total**
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 
 
@@ -854,14 +962,18 @@ ggplot(data, aes(x = payment_method, y = total, fill = payment_method)) +
 ```
 
 
-### Résultat et Conclusion
+**Résultat et Conclusion**
 Les trois méthodes de paiement (espèces, portefeuille électronique, carte de crédit) ne présentent pas de différences significatives en termes de montant moyen payé, leurs médianes étant relativement proches.
 La distribution des montants est également similaire entre les différentes méthodes, avec un nombre et une répartition des valeurs aberrantes globalement comparables.
 Par conséquent, on peut considérer qu’il n’y a pas d’influence notable de la méthode de paiement sur le montant moyen des achats.
+</details>
 
-## Question 17 :Quelle boutique gagne le plus d’argent ?
 
-### Méthode
+<details> 
+<summary><strong>Question 17 :Quelle boutique gagne le plus d’argent ?
+</strong></summary>
+
+**Méthode**
 
 Pour identifier la boutique (ville) la plus rentable, nous avons :
 
@@ -875,7 +987,7 @@ Utilisé un graphe en nuage de bulles (Bubble Cloud) : la taille des bulles repr
 
 Ce type de visualisation est plus expressif qu’un simple diagramme en barres : il attire l’attention sur les villes les plus profitables tout en offrant une vision globale de la répartition.
 
-### Visualisation
+**Visualisation**
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 if (!requireNamespace("packcircles", quietly = TRUE)) {
   install.packages("packcircles")
@@ -915,7 +1027,7 @@ ggplot() +
 
 ```
 
-### Analyse
+**Analyse**
 
 Le graphique met en évidence les 30 boutiques (villes) les plus rentables à travers un nuage de bulles :
 
@@ -937,10 +1049,13 @@ Conclusion:
 La boutique générant le plus de profit est New York City, située dans la région South.
 
 Les régions West et South dominent clairement en termes de rentabilité parmi les 30 meilleures boutiques, ce qui pourrait orienter les décisions stratégiques futures, comme l’ouverture de nouvelles boutiques ou la priorisation des investissements.
+</details>
 
-## Question 18 :Une réduction pousse-t-elle à acheter plus ?
+<details> 
+<summary><strong>Question 18 :Une réduction pousse-t-elle à acheter plus ?
+</strong></summary>
 
-### Méthode
+**Méthode**
 
 Pour répondre à cette question, nous allons nous concentrer sur deux paramètres :
 
@@ -951,9 +1066,9 @@ Pour répondre à cette question, nous allons nous concentrer sur deux paramètr
 
 Nous utiliserons un graphique de dispersion pour visualiser la relation entre la remise et la quantité d'achat correspondante pour chaque transaction. Si le phénomène de "réductions plus importantes, plus d'achats" est vrai, nous pouvons observer une tendance de corrélation positive dans le graphique (les points de données sont distribués en bas de gauche en haut à droite). Inversement, s'il n'y a pas de modèle évident, cela peut indiquer que la remise a peu d'impact sur la quantité d'achat.
 
-### Visualisation
+**Visualisation**
 
-#### Line chart: Discount et Quantity
+**Line chart: Discount et Quantity**
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 data_superStore <- read_delim(
   "data/superstore.csv",
@@ -967,20 +1082,20 @@ ggplot(data_superStore, aes(x = Discount, y = Quantity)) +
   theme_minimal()
 ```
 
-
-### Résultat et Conclusion
+**Résultat et Conclusion**
 Les parcelles de dispersion montrent que la plupart des transactions sont effectuées à faible remise et que le nombre d'achats est généralement stable. Le nombre de ventes dans différentes remises est essentiellement la distribution d'évaluation.En d'autres termes, dans cet ensemble de données, les remises ne semblent pas encourager clairement les clients à acheter plus.
+</details>
 
 
-## Question 19 : Est-ce que les gens notent mieux s’ils paient plus ?
-
-**Données utilisées** : `rating`, `total` (Walmart)
+<details> 
+<summary><strong>Question 19 : Est-ce que les gens notent mieux s’ils paient plus ?
+</strong></summary>
 
 Nous voulons savoir s’il existe une relation entre le montant dépensé par un client et la note qu’il attribue à son expérience d’achat.
 
 Nous émettons l’hypothèse que payer plus pourrait être associé à une meilleure satisfaction, car le client peut percevoir une meilleure qualité de service ou de produit. Nous analyserons cela via un nuage de points avec courbe de tendance linéaire.
 
-### Visualisation : Total payé vs Note client
+**Visualisation : Total payé vs Note client**
 
 ```{r echo=FALSE}
 
@@ -1000,12 +1115,9 @@ walmart_total %>%
        x = "Tranche de montant total ($)",
        y = "Note moyenne") +
   theme_minimal()
-
-
-
 ```
 
-### Analyse
+**Analyse**
 
 Le graphique présente la note moyenne donnée par les clients en fonction du montant total payé :
 
@@ -1022,14 +1134,18 @@ Interprétation :
 - Toutefois, une dépense modérée à élevée (100–600 $) semble associée à des notes légèrement meilleures.
 
 - Cela peut s’expliquer par une meilleure expérience perçue lorsque le client paie pour des produits ou services de meilleure qualité.
+</details>
 
 
+<details> 
+<summary><strong> Question 20 : À quelle heure achète-t-on le plus ?
+</strong></summary>
 
-## Question 20 : À quelle heure achète-t-on le plus ?
+Nous cherchons à savoir à quel moment de la journée les clients réalisent le plus d’achats dans le magasin Walmart. Cette information peut aider à mieux comprendre les habitudes d’achat et à adapter les ressources (personnel, stock, promotions) en fonction des heures de forte activité.
 
-Pour répondre à cette question, nous allons utiliser le jeu de données Walmart. Deux variables vont être étudiées : tme, qui correspond à l'heure de la transaction, et total, qui indique le montant de la vente. L'approche à utiliser se structure de la manière suivante : d'abord, nous allons extraire l'heure à partir de la variable tme. Ensuite, nous allons additionner les ventes totales pour chaque heure. Enfin, nous allons représenter ces résultats sous forme de graphique en barres (barplot). Nous espérons obtenir après cette analyse qu'il y aura : un pic de ventes autour de midi, et un second pic en fin de journée.
+Nous supposons que les clients font davantage d’achats autour de midi (pause déjeuner) et en fin de journée (après le travail). Pour tester cela, nous allons extraire l’heure à partir de la variable tme, regrouper les montants totaux par heure, et les représenter sous forme de barplot.
 
-### Walmart - Répartition des ventes par heure
+**Walmart - Répartition des ventes par heure**
 
 ```{r, echo = FALSE}
 walmart_time <- walmart_time %>%
@@ -1044,11 +1160,30 @@ ggplot(walmart_time, aes(x = Hour, y = Total_Sales)) +
   scale_x_continuous(breaks = 0:23) +
   theme_minimal()
 ```
+**Analyse**
 
-### Analyse
+À partir du graphique, on peut tirer les observations suivantes :
 
-On constate sur le graphique que: la plupart des gens font leurs achats surtout autour de midi, entre 12h et 13h et en soirée, entre 18h-19h. L'interprétation qu'on peut faire est que les gens profitent de leur pause déjeuner de midi pour faire quelques courses ou acheter ce dont ils ont besoin rapidement. Aussi en soirée, les gens sortent du travail et s’arrêtent souvent au magasin avant de rentrer chez eux. En revanche, tôt le matin et tard le soir, il y a beaucoup moins de ventes, car les gens dorment, travaillent ou préfèrent rester tranquillement chez eux.
+Les pics de ventes se situent :
 
+- autour de 13h (34 723 $) → pause déjeuner.
+
+- vers 19h (39 700 $) → sortie du travail.
+
+Les ventes sont plus faibles :
+
+- Entre 16h et 17h, période intermédiaire entre travail et retour à la maison.
+
+- À partir de 20h, les achats diminuent fortement.
+
+Interprétation :
+
+- À midi, les clients profitent de leur pause pour faire quelques courses rapides.
+
+- En soirée, ils s’arrêtent au magasin en rentrant du travail.
+
+- Tôt le matin et tard le soir, l’activité baisse car les clients ne sont pas disponibles (sommeil, travail, repas).
+</details>
 
 
 
