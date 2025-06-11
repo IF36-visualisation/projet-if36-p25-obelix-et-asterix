@@ -1063,27 +1063,42 @@ Pour répondre à cette question, nous allons nous concentrer sur deux paramètr
 
 **Quantity** : Nombre d’unités vendues.
 
-
-Nous utiliserons un graphique de dispersion pour visualiser la relation entre la remise et la quantité d'achat correspondante pour chaque transaction. Si le phénomène de "réductions plus importantes, plus d'achats" est vrai, nous pouvons observer une tendance de corrélation positive dans le graphique (les points de données sont distribués en bas de gauche en haut à droite). Inversement, s'il n'y a pas de modèle évident, cela peut indiquer que la remise a peu d'impact sur la quantité d'achat.
+Nous utiliserons un diagramme de violon pour voir la relation entre la livraison de chaque transaction et la quantité d'achat correspondante. Étant donné que le diagramme de violon peut afficher plus intuitivement les différences directes entre différents groupes, nous pouvons voir les valeurs extrêmes et la distribution globale de différents groupes en même temps, ce qui nous aide à mieux tirer des conclusions.
 
 **Visualisation**
 
-**Line chart: Discount et Quantity**
+**Violin Plot: Discount et Quantity**
 ```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
 data_superStore <- read_delim(
   "data/superstore.csv",
 )
 
-ggplot(data_superStore, aes(x = Discount, y = Quantity)) +
-  geom_point(alpha = 0.5, color = "steelblue") +
-  labs(title = "Relation entre la réduction et la quantité achetée",
-       x = "Réduction (Discount)",
+data_superStore <- data_superStore %>%
+  mutate(Discount_Group = case_when(
+    Discount == 0 ~ "0%",
+    Discount > 0 & Discount <= 0.2 ~ "0%-20%",
+    Discount > 0.2 & Discount <= 0.4 ~ "20%-40%",
+    Discount > 0.4 & Discount <= 0.6 ~ "40%-60%",
+    Discount > 0.6 ~ "60%-80%",
+    TRUE ~ "Autres"
+  ))
+
+ggplot(data_superStore, aes(x = Discount_Group, y = Quantity, fill = Discount_Group)) +
+  geom_violin(trim = FALSE, alpha = 0.7) +
+  geom_boxplot(width = 0.1, outlier.size = 0.5, color = "black", alpha = 0.6) +
+  labs(title = "Distribution de la quantité achetée selon les niveaux de remise",
+       x = "Niveau de remise (Discount)",
        y = "Quantité achetée") +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.position = "none")
 ```
 
 **Résultat et Conclusion**
-Les parcelles de dispersion montrent que la plupart des transactions sont effectuées à faible remise et que le nombre d'achats est généralement stable. Le nombre de ventes dans différentes remises est essentiellement la distribution d'évaluation.En d'autres termes, dans cet ensemble de données, les remises ne semblent pas encourager clairement les clients à acheter plus.
+À partir de ce graphique en violon, on peut observer les données suivantes de manière intuitive :
+Tout d’abord, la majorité des quantités achetées se situe entre 2 et 5 unités.
+Bien qu’il existe des remises élevées (groupes à droite), leur forme de distribution est similaire à celle des faibles remises, voire avec une médiane légèrement plus basse.
+Il est donc évident que des remises importantes (plus de 40 %) n’incitent pas significativement les clients à acheter davantage.
+Les commandes sans remise (0 %) affichent également une médiane de quantité achetée similaire, voire légèrement supérieure, ce qui indique que la remise n’est pas un facteur déterminant du volume d’achat.
 </details>
 
 
