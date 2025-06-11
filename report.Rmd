@@ -2,7 +2,7 @@
 title: 'Analyse croisée : Superstore & Walmart'
 subtitle: "Obelix et Asterix"
 author: "Membre: TAKAM TALLA Vigny Brayan, Arthur KAMGA, Chengxian ZHAO, Jianghao LIU"
-date: "2025-04-27"
+date: "2025-06-11"
 output:
   html_document:
     df_print: paged
