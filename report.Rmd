@@ -7,6 +7,7 @@ output:
   html_document:
     df_print: paged
   pdf_document: default
+  
 ---
 
 ## Introduction
@@ -80,22 +81,71 @@ Ce fichier CSV contient **1000 transactions** et **20 variables**. Il fournit de
 - `product_line` : type de produit.
 - `payment_method` : moyen de paiement.
 
-
-
 ## Chargement des packages et des données
 ```{r message=FALSE}
 library(ggplot2)
 library(dplyr)
 library(readr)
 library(lubridate)
+library(ggcorrplot)
 library(patchwork) # important pour combiner les plots
 Sys.setlocale("LC_TIME", "fr_FR.UTF-8")
 
 # Importer les données
 superstore <- read_csv("data/superstore.csv")
 walmart <- read_delim("data/Walmart.csv", delim = ";")
+
+
 walmart_time <-walmart
+walmart_total<-walmart
+superstore_raw<- superstore
 ```
+
+
+# Vue d’ensemble et corrélations entre variables
+
+## Objectif
+
+Avant de répondre aux différentes questions d’analyse, il est utile de commencer par une **vue d’ensemble** des jeux de données, afin de :
+
+- Comprendre la structure globale (types de données, valeurs manquantes, distributions).
+- Identifier des **relations entre variables numériques** à l’aide d’un graphique de corrélation.
+
+Nous utilisons ici deux jeux de données :
+
+- `Superstore` (ventes inter-entreprises B2B)
+- `Walmart` (ventes aux particuliers B2C)
+
+# Vue d'ensemble des deux jeu de données
+```{r echo=FALSE, warning=FALSE}
+
+# Corrélation Walmart
+num_walmart <- walmart_total %>%
+  select(where(is.numeric)) %>%
+  na.omit()
+
+cor_walmart <- cor(num_walmart)
+
+ggcorrplot(cor_walmart, lab = TRUE, title = "Corrélation entre variables numériques (Walmart)")
+
+```
+
+```{r echo=FALSE}
+# Corrélation Superstore
+num_superstore <- superstore %>%
+  select(where(is.numeric)) %>%
+  na.omit()
+
+cor_superstore <- cor(num_superstore)
+
+ggcorrplot(cor_superstore, lab = TRUE, title = "Corrélation entre variables numériques (Superstore)")
+```
+
+- Une corrélation proche de 1 ou -1 indique un lien linéaire fort (positif ou négatif).
+
+- Une valeur proche de 0 montre peu ou pas de relation.
+
+
 ## Question 1
 
 1. Problématique
@@ -501,6 +551,57 @@ Si les produits plus chers avaient tendance à être mieux notés, les points se
 De plus, nous avons remarqué une observation intéressante : quelle que soit la valeur du prix unitaire, la note attribuée est toujours supérieure ou égale à 4.
 
 
+# Question 8 : Est-ce qu’un long délai de livraison fait perdre de l’argent ?
+
+**Données utilisées** : `Ship Date`, `Order Date`, `Profit` (Superstore)
+
+## Méthode
+
+Nous cherchons à savoir si les délais de livraison ont un impact sur le profit généré par une vente. Autrement dit, est-ce que livrer plus lentement fait perdre de l'argent à l'entreprise ?
+
+Nous pensons que plus le délai entre commande et expédition est long, plus cela engendre des coûts supplémentaires, ce qui pourrait réduire le profit. Nous allons visualiser cette relation à l’aide d’un nuage de points accompagné d’une courbe de tendance linéaire.
+
+## Visualisation : Délai de livraison vs Profit
+
+```{r echo=FALSE}
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(readr)
+
+superstore <- superstore_raw %>%
+  mutate(Order_Date = as.Date(`Order Date`, format="%d-%m-%y"),
+         Ship_Date = as.Date(`Ship Date`, format="%d-%m-%y"),
+         Delivery_Days = as.numeric(difftime(Ship_Date, Order_Date, units = "days")))
+
+# Visualisation
+ggplot(superstore, aes(x = factor(Delivery_Days), y = Profit)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(title = "Profit par délai de livraison (Superstore)",
+       x = "Délai de livraison (jours)",
+       y = "Profit ($)") +
+  theme_minimal()
+
+```
+
+### Analyse
+
+À partir du graphique, on observe :
+
+- Le profit est très variable, quel que soit le nombre de jours de livraison.
+
+- Aucune tendance claire n’indique qu’un délai plus long entraîne une baisse systématique du profit.
+
+- La majorité des profits, quelle que soit la durée, restent autour de zéro.
+
+Interprétation :
+
+- Le délai de livraison ne semble pas avoir d’effet direct sur la rentabilité.
+
+- D’autres facteurs (comme les frais de port, la catégorie de produit ou la réduction) influencent probablement davantage le profit que la durée de livraison seule.
+
+
+
 ## Question 9 – Quelle catégorie a la plus grosse marge ?
 
 Pour répondre à cette question, nous allons analyser le dataset **Superstore**, en nous concentrant sur la **marge bénéficiaire totale** (Profit) pour chaque **catégorie de produit**.  
@@ -593,6 +694,49 @@ ggplot(income_by_time, aes(x = 2, y = total_income, fill = time_of_day)) +
 D’après le diagramme en barres, on peut clairement observer que les ventes du matin génèrent le moins de bénéfices, suivies de l’après-midi, tandis que les ventes du soir rapportent le plus. De plus, les bénéfices du matin représentent moins de la moitié de ceux de l’après-midi, alors que la différence entre l’après-midi et le soir n’est pas très marquée.
 
 Cela m’a fait penser au cours Éthique et biais de visualisation : comme les tranches horaires du champ time_of_day sont déjà prédéfinies dans le jeu de données, nous ne connaissons pas la répartition exacte des heures. Il est donc possible que, si l’intervalle de l’après-midi avait été légèrement élargi lors de la collecte des données, cela aurait pu inverser les résultats et faire apparaître l’après-midi comme la période la plus rentable. Ce constat est assez intéressant.
+
+# Question 12 : Quels États font le plus de ventes ?
+
+**Données utilisées** : `State`, `Sales` (Superstore)
+
+## Méthode
+
+Nous voulons identifier les régions géographiques les plus actives commercialement, en mesurant la valeur totale des ventes par État dans le jeu de données Superstore.
+
+Nous supposons que certains États génèrent beaucoup plus de ventes que d'autres, possiblement en raison de leur population, leur pouvoir d'achat ou leur position géographique stratégique. Une représentation en barplot des ventes totales par État nous permettra de visualiser cette répartition.
+
+
+## Visualisation : Ventes par État
+
+```{r echo=FALSE}
+state_sales <- superstore %>%
+  group_by(State) %>%
+  summarise(Total_Sales = sum(Sales, na.rm = TRUE)) %>%
+  arrange(desc(Total_Sales))
+
+ggplot(state_sales, aes(x = reorder(State, Total_Sales), y = Total_Sales)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Total des ventes par État (Superstore)",
+       x = "État",
+       y = "Ventes ($)") +
+  theme_minimal()
+```
+
+### Analyse
+Le graphique met en évidence des écarts très marqués entre les États :
+
+- Californie est de loin l’État avec le plus grand volume de ventes, suivie par New York et Texas.
+
+- Un petit groupe d’États concentre l’essentiel du chiffre d’affaires.
+
+- La majorité des autres États génèrent des ventes beaucoup plus faibles, parfois presque négligeables.
+
+Interprétation :
+
+- Les États en tête sont généralement plus peuplés, plus riches ou plus densément urbanisés, ce qui favorise l’activité commerciale.
+
+- Cette concentration peut guider les décisions marketing ou logistiques (ciblage, stock, implantation de centres de distribution).
 
 ## Question 13 :Quelle région est la plus performante en termes de rentabilité ?
 
@@ -821,6 +965,59 @@ ggplot(data_superStore, aes(x = Discount, y = Quantity)) +
 
 ### Résultat et Conclusion
 Les parcelles de dispersion montrent que la plupart des transactions sont effectuées à faible remise et que le nombre d'achats est généralement stable. Le nombre de ventes dans différentes remises est essentiellement la distribution d'évaluation.En d'autres termes, dans cet ensemble de données, les remises ne semblent pas encourager clairement les clients à acheter plus.
+
+
+# Question 19 : Est-ce que les gens notent mieux s’ils paient plus ?
+
+**Données utilisées** : `rating`, `total` (Walmart)
+
+Nous voulons savoir s’il existe une relation entre le montant dépensé par un client et la note qu’il attribue à son expérience d’achat.
+
+Nous émettons l’hypothèse que payer plus pourrait être associé à une meilleure satisfaction, car le client peut percevoir une meilleure qualité de service ou de produit. Nous analyserons cela via un nuage de points avec courbe de tendance linéaire.
+
+## Visualisation : Total payé vs Note client
+
+```{r echo=FALSE}
+
+library(dplyr)
+
+walmart_total %>%
+  mutate(total_bin = cut(total, 
+                         breaks = c(0, 100, 200, 300, 400, 500, 600, 1000),
+                         labels = c("0-100", "100-200", "200-300", "300-400", "400-500", "500-600", "600+"))) %>%
+  filter(!is.na(total_bin)) %>%     # <-- Cette ligne filtre les NA
+  group_by(total_bin) %>%
+  summarise(mean_rating = mean(rating, na.rm = TRUE)) %>%
+  ggplot(aes(x = total_bin, y = mean_rating)) +
+  geom_col(fill = "steelblue") +
+  geom_text(aes(label = round(mean_rating, 2)), vjust = -0.5) +
+  labs(title = "Note moyenne par tranche de total payé",
+       x = "Tranche de montant total ($)",
+       y = "Note moyenne") +
+  theme_minimal()
+
+
+
+```
+
+### Analyse
+
+Le graphique présente la note moyenne donnée par les clients en fonction du montant total payé :
+
+- Les meilleures notes sont observées dans les tranches 100–200 $ (7.22) et 500–600 $ (7.28).
+
+- Les tranches 200–500 $ restent globalement stables, avec des notes autour de 7.0.
+
+- En dessous de 100 $ et au-dessus de 600 $, les notes sont plus basses : respectivement 6.8 et 6.71, et 6.2 pour les valeurs manquantes.
+
+Interprétation :
+
+- Il n’existe pas de relation linéaire forte entre montant payé et satisfaction.
+
+- Toutefois, une dépense modérée à élevée (100–600 $) semble associée à des notes légèrement meilleures.
+
+- Cela peut s’expliquer par une meilleure expérience perçue lorsque le client paie pour des produits ou services de meilleure qualité.
+
 
 
 ## Question 20 : À quelle heure achète-t-on le plus ?
