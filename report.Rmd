@@ -1171,6 +1171,39 @@ Interprétation :
 - Tôt le matin et tard le soir, l’activité baisse car les clients ne sont pas disponibles (sommeil, travail, repas).
 </details>
 
+<details> 
+<summary><strong> Question 16 : Quelles sous-catégories ne rapportent pas ?
+</strong></summary>
+
+Nous cherchons ici à identifier les **sous-catégories de produits** (dans Superstore) qui génèrent **des pertes** ou **un profit très faible**. Cela peut aider à décider s’il faut arrêter certains produits, revoir leur prix ou repenser les campagnes marketing.
+
+Pour cela, nous allons agréger les profits par sous-catégorie, puis les visualiser dans un diagramme à barres. Les sous-catégories non rentables apparaîtront en rouge.
+
+**Superstore - Profit total par sous-catégorie**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+
+# Nettoyage et regroupement
+profit_sous_cat <- superstore %>%
+  group_by(Sub.Category) %>%
+  summarise(Profit_total = sum(Profit, na.rm = TRUE)) %>%
+  arrange(Profit_total)
+
+# Bar chart avec couleur conditionnelle
+ggplot(profit_sous_cat, aes(x = reorder(Sub.Category, Profit_total), y = Profit_total, fill = Profit_total > 0)) +
+  geom_col() +
+  coord_flip() +
+  scale_fill_manual(values = c("red", "steelblue"), labels = c("Non rentable", "Rentable")) +
+  labs(
+    title = "Superstore : Profit total par sous-catégorie",
+    x = "Sous-Catégorie",
+    y = "Profit total ($)",
+    fill = "Rentabilité"
+  ) +
+  theme_minimal()
+
+
 
 
 
