@@ -1184,25 +1184,44 @@ Pour cela, nous allons agréger les profits par sous-catégorie, puis les visual
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 
-# Nettoyage et regroupement
+# Nettoyage du nom de colonne s'il contient des tirets
+names(superstore) <- make.names(names(superstore))
+
+# Agrégation des profits
 profit_sous_cat <- superstore %>%
   group_by(Sub.Category) %>%
   summarise(Profit_total = sum(Profit, na.rm = TRUE)) %>%
   arrange(Profit_total)
 
-# Bar chart avec couleur conditionnelle
+# Visualisation
 ggplot(profit_sous_cat, aes(x = reorder(Sub.Category, Profit_total), y = Profit_total, fill = Profit_total > 0)) +
-  geom_col() +
-  coord_flip() +
-  scale_fill_manual(values = c("red", "steelblue"), labels = c("Non rentable", "Rentable")) +
+  geom_col(show.legend = FALSE) +
+  geom_text(
+  aes(label = paste0("$", format(round(Profit_total, 0), big.mark = ","))),
+  hjust = ifelse(profit_sous_cat$Profit_total > 0, -0.1, 1.1),
+  size = 3.5,
+  color = "black"
+) +
+  scale_fill_manual(values = c("red", "steelblue")) +
   labs(
-    title = "Superstore : Profit total par sous-catégorie",
+    title = "Profit net par sous-catégorie (Superstore)",
+    subtitle = "En rouge : sous-catégories non rentables",
     x = "Sous-Catégorie",
-    y = "Profit total ($)",
-    fill = "Rentabilité"
+    y = "Profit total (USD)"
   ) +
-  theme_minimal()
-</details> 
+  coord_flip() +
+  theme_minimal(base_size = 13)
+```
+Analyse
+
+D’après le graphique :
+
+    Les sous-catégories Tables, Bookcases, Supplies et Fasteners sont déficitaires.
+
+    Les plus rentables sont Copiers, Phones et Accessories.
+
+Ces résultats suggèrent qu’une stratégie spécifique devrait être envisagée pour les produits déficitaires : revoir le pricing, les promotions ou même envisager leur suppression.
+</details> ```
 
 
 
