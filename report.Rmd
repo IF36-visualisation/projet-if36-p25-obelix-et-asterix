@@ -1202,6 +1202,7 @@ ggplot(profit_sous_cat, aes(x = reorder(Sub.Category, Profit_total), y = Profit_
     fill = "Rentabilité"
   ) +
   theme_minimal()
+</details> 
 
 
 
