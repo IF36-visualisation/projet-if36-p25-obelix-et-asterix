@@ -2,7 +2,7 @@
 title: 'Analyse croisée : Superstore & Walmart'
 subtitle: "Obelix et Asterix"
 author: "Membre: TAKAM TALLA Vigny Brayan, Arthur KAMGA, Chengxian ZHAO, Jianghao LIU"
-date: "2025-04-27"
+date: "2025-06-17"
 output:
   prettydoc::html_pretty:
     theme: HPSTR
@@ -259,46 +259,6 @@ En observant les dépenses par genre, on remarque que les femmes ont tendance à
 Pour le graphique des ventes par segment, on remarque que les médianes sont assez proches entre les segments "Consumer", "Corporate" et "Home Office". Cependant, la distribution des ventes est assez similaire pour tous les segments, avec une forte présence de points aberrants vers le haut. Le segment "Consumer" semble légèrement en tête, générant davantage de ventes élevées que les autres. Cela dit, les différences entre les segments ne sont pas énormes.
 </details>
 
-
-<details> 
-<summary><strong> Question : Quels produits sont beaucoup achetés ?
-</strong></summary>
-
-**Données utilisées** : `product_line` et `quantity` (jeu de données Walmart)
-
----
-
-**Méthode**
-
-Pour répondre on a:
-
-- Utiliser **product_line** pour identifier les produits.
-- Utiliser **quantity** pour mesurer combien de fois chaque produit a été acheté.
-- Additionner les quantités par type de produit.
-- Classer les produits du plus acheté au moins acheté
-
----
-
-**Visualisation : Produits les plus achetés**
-
-```{r, echo = FALSE}
-library(dplyr)
-# Calculer la quantité totale par type de produit
-produits_walmart <- walmart %>%
-  group_by(product_line) %>%
-  summarise(Total_Quantity = sum(quantity, na.rm = TRUE)) %>%
-  arrange(desc(Total_Quantity))
-
-# Créer le graphique
-ggplot(produits_walmart, aes(x = reorder(product_line, Total_Quantity), y = Total_Quantity)) +
-  geom_col(fill = "skyblue") +
-  coord_flip() +
-  labs(title = "Produits les plus achetés chez Walmart",
-       x = "Produit",
-       y = "Quantité totale achetée") +
-  theme_minimal()
-```
-</details>
 
 
 <details> 
@@ -901,6 +861,52 @@ Le treemap permet ici une visualisation doublement efficace : il nous montre où
 Cette analyse suggère que pour maximiser la rentabilité, l’entreprise pourrait étudier les pratiques commerciales mises en œuvre dans la région West, et envisager des actions correctives dans la région Central.
 </details>
 
+<details> 
+<summary><strong> Question 14 : Quels produits sont beaucoup achetés ?
+</strong></summary>
+
+**Données utilisées** : `product_line` et `quantity` (jeu de données Walmart)
+
+---
+
+**Méthode**
+
+Pour répondre on a:
+
+- Utiliser **product_line** pour identifier les produits.
+- Utiliser **quantity** pour mesurer combien de fois chaque produit a été acheté.
+- Additionner les quantités par type de produit.
+- Classer les produits du plus acheté au moins acheté
+
+---
+
+**Visualisation : Produits les plus achetés**
+
+```{r, echo = FALSE}
+library(dplyr)
+superstore <- read_csv("data/superstore.csv")
+walmart <- read_delim("data/Walmart.csv", delim = ";")
+
+walmart_time <-walmart
+walmart_total<-walmart
+superstore_raw<- superstore
+
+# Calculer la quantité totale par type de produit
+produits_walmart <- walmart %>%
+  group_by(product_line) %>%
+  summarise(Total_Quantity = sum(quantity, na.rm = TRUE)) %>%
+  arrange(desc(Total_Quantity))
+
+# Créer le graphique
+ggplot(produits_walmart, aes(x = reorder(product_line, Total_Quantity), y = Total_Quantity)) +
+  geom_col(fill = "skyblue") +
+  coord_flip() +
+  labs(title = "Produits les plus achetés chez Walmart",
+       x = "Produit",
+       y = "Quantité totale achetée") +
+  theme_minimal()
+```
+</details>
 
 <details> 
 <summary><strong>Question 15 :Est-ce que la façon de payer change le prix moyen ?
@@ -938,6 +944,58 @@ Les trois méthodes de paiement (espèces, portefeuille électronique, carte de 
 La distribution des montants est également similaire entre les différentes méthodes, avec un nombre et une répartition des valeurs aberrantes globalement comparables.
 Par conséquent, on peut considérer qu’il n’y a pas d’influence notable de la méthode de paiement sur le montant moyen des achats.
 </details>
+
+<details> 
+<summary><strong> Question 16 : Quelles sous-catégories ne rapportent pas ?
+</strong></summary>
+
+Nous cherchons ici à identifier les **sous-catégories de produits** (dans Superstore) qui génèrent **des pertes** ou **un profit très faible**. Cela peut aider à décider s’il faut arrêter certains produits, revoir leur prix ou repenser les campagnes marketing.
+
+Pour cela, nous allons agréger les profits par sous-catégorie, puis les visualiser dans un diagramme à barres. Les sous-catégories non rentables apparaîtront en rouge.
+
+**Superstore - Profit total par sous-catégorie**
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+
+# Nettoyage du nom de colonne s'il contient des tirets
+names(superstore) <- make.names(names(superstore))
+
+# Agrégation des profits
+profit_sous_cat <- superstore %>%
+  group_by(Sub.Category) %>%
+  summarise(Profit_total = sum(Profit, na.rm = TRUE)) %>%
+  arrange(Profit_total)
+
+# Visualisation
+ggplot(profit_sous_cat, aes(x = reorder(Sub.Category, Profit_total), y = Profit_total, fill = Profit_total > 0)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(
+  aes(label = paste0("$", format(round(Profit_total, 0), big.mark = ","))),
+  hjust = ifelse(profit_sous_cat$Profit_total > 0, -0.1, 1.1),
+  size = 3.5,
+  color = "black"
+) +
+  scale_fill_manual(values = c("red", "steelblue")) +
+  labs(
+    title = "Profit net par sous-catégorie (Superstore)",
+    subtitle = "En rouge : sous-catégories non rentables",
+    x = "Sous-Catégorie",
+    y = "Profit total (USD)"
+  ) +
+  coord_flip() +
+  theme_minimal(base_size = 13)
+```
+Analyse
+
+D’après le graphique :
+
+    Les sous-catégories Tables, Bookcases, Supplies et Fasteners sont déficitaires.
+
+    Les plus rentables sont Copiers, Phones et Accessories.
+
+Ces résultats suggèrent qu’une stratégie spécifique devrait être envisagée pour les produits déficitaires : revoir le pricing, les promotions ou même envisager leur suppression.
+</details> 
 
 
 <details> 
@@ -1171,57 +1229,7 @@ Interprétation :
 - Tôt le matin et tard le soir, l’activité baisse car les clients ne sont pas disponibles (sommeil, travail, repas).
 </details>
 
-<details> 
-<summary><strong> Question 16 : Quelles sous-catégories ne rapportent pas ?
-</strong></summary>
 
-Nous cherchons ici à identifier les **sous-catégories de produits** (dans Superstore) qui génèrent **des pertes** ou **un profit très faible**. Cela peut aider à décider s’il faut arrêter certains produits, revoir leur prix ou repenser les campagnes marketing.
-
-Pour cela, nous allons agréger les profits par sous-catégorie, puis les visualiser dans un diagramme à barres. Les sous-catégories non rentables apparaîtront en rouge.
-
-**Superstore - Profit total par sous-catégorie**
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
-library(tidyverse)
-
-# Nettoyage du nom de colonne s'il contient des tirets
-names(superstore) <- make.names(names(superstore))
-
-# Agrégation des profits
-profit_sous_cat <- superstore %>%
-  group_by(Sub.Category) %>%
-  summarise(Profit_total = sum(Profit, na.rm = TRUE)) %>%
-  arrange(Profit_total)
-
-# Visualisation
-ggplot(profit_sous_cat, aes(x = reorder(Sub.Category, Profit_total), y = Profit_total, fill = Profit_total > 0)) +
-  geom_col(show.legend = FALSE) +
-  geom_text(
-  aes(label = paste0("$", format(round(Profit_total, 0), big.mark = ","))),
-  hjust = ifelse(profit_sous_cat$Profit_total > 0, -0.1, 1.1),
-  size = 3.5,
-  color = "black"
-) +
-  scale_fill_manual(values = c("red", "steelblue")) +
-  labs(
-    title = "Profit net par sous-catégorie (Superstore)",
-    subtitle = "En rouge : sous-catégories non rentables",
-    x = "Sous-Catégorie",
-    y = "Profit total (USD)"
-  ) +
-  coord_flip() +
-  theme_minimal(base_size = 13)
-```
-Analyse
-
-D’après le graphique :
-
-    Les sous-catégories Tables, Bookcases, Supplies et Fasteners sont déficitaires.
-
-    Les plus rentables sont Copiers, Phones et Accessories.
-
-Ces résultats suggèrent qu’une stratégie spécifique devrait être envisagée pour les produits déficitaires : revoir le pricing, les promotions ou même envisager leur suppression.
-</details> ```
 
 
 
