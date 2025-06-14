@@ -8,7 +8,7 @@ dashboardPage(
       menuItem("Ventes par jour", tabName = "jour", icon = icon("calendar")),
       menuItem("Remise vs Profit", tabName = "remise", icon = icon("percent")),
       menuItem("Top produits", tabName = "produits", icon = icon("star")),
-      menuItem("Profit Cat??gories", tabName = "categorie", icon = icon("tags")),
+      menuItem("Profit Catégories", tabName = "categorie", icon = icon("tags")),
       menuItem("Profits par Segment", tabName = "segment", icon = icon("users")),
       menuItem("Produits populaires (Walmart)", tabName = "populaires", icon = icon("shopping-cart"))
     )
@@ -19,8 +19,8 @@ dashboardPage(
       tabItem(tabName = "jour",
               box(width = 12,
                   dateRangeInput("date_jour",
-                                 "P??riode (Walmart)", 
-                                 start = NULL, end = NULL)
+                                 "Période (Walmart)", 
+                                 start = "2019-01-01", end = "2019-01-07")
               ),
               box(plotOutput("plot_jour"), width = 12)
       ),
@@ -35,7 +35,7 @@ dashboardPage(
       # Q4
       tabItem(tabName = "produits",
               box(width = 4,
-                  sliderInput("topN", "Nombre de produits ?? afficher", 
+                  sliderInput("topN", "Nombre de produits à afficher", 
                               min = 5, max = 20, value = 10, step = 1)
               ),
               box(plotOutput("plot_produits"), width = 12)
@@ -43,7 +43,7 @@ dashboardPage(
       # Q5
       tabItem(tabName = "categorie",
               box(width = 4,
-                  checkboxGroupInput("categories", "Choisir cat??gories", 
+                  checkboxGroupInput("categories", "Choisir catégories", 
                                      choices = NULL, selected = NULL),
                   radioButtons("cut_remise", "Grille remise", choices = c("4 groupes", "6 groupes"))
               ),
@@ -58,7 +58,7 @@ dashboardPage(
                   selectInput("ville", "Ville :", choices = NULL)
                 ),
                 box(
-                  title = "Produits les plus achet??s dans la ville",
+                  title = "Produits les plus achetès dans la ville",
                   width = 8,
                   plotOutput("plot_produits_walmart")
                 )
@@ -68,7 +68,7 @@ dashboardPage(
       tabItem(tabName = "segment",
               box(width = 4,
                   radioButtons("agg_segment",
-                               "Agr??gation :",
+                               "Agrégation :",
                                choices = c("Segment", "City"))
               ),
               box(plotOutput("plot_segment"), width = 12)

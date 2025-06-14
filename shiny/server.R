@@ -8,7 +8,7 @@ server <- function(input, output, session) {
   walmart <- read_delim("../data/Walmart.csv", delim = ";")
   superstore <- read_csv("../data/superstore.csv")
   
-  # ???????????????????????????Q5???
+  # Q5: Quelles catégories perdent de l’argent avec les réductions ?
   observe({
     cats <- unique(superstore$Category)
     updateCheckboxGroupInput(session, "categories", 
@@ -16,6 +16,9 @@ server <- function(input, output, session) {
   })
   
   # Q2: Ventes par jour
+  Sys.setlocale("LC_TIME", "French") 
+  # Définir la langue du système pour les dates en français afin de permettre un regroupement correct par jour.
+    
   output$plot_jour <- renderPlot({
     df <- walmart %>% mutate(Date = as.Date(dtme))
     if (!is.null(input$date_jour)) {
@@ -24,7 +27,7 @@ server <- function(input, output, session) {
     }
     df <- df %>%
       mutate(Jour = factor(weekdays(Date),
-                           levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"))) %>%
+                           levels = c("lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"))) %>%
       group_by(Jour) %>%
       summarise(Total = sum(total, na.rm = TRUE))
     
@@ -63,7 +66,7 @@ server <- function(input, output, session) {
       theme_minimal()
   })
   
-  # Q5: Profit par cat??gorie et remise
+  # Q5: Profit par catégorie et remise
   output$plot_cat_remise <- renderPlot({
     req(input$categories)
     
@@ -85,12 +88,12 @@ server <- function(input, output, session) {
     
     ggplot(df, aes(x = DiscGroup, y = AvgProfit, fill = Category)) +
       geom_col(position = "dodge") +
-      labs(title = "Profit moyen par cat??gorie & remise",
+      labs(title = "Profit moyen par catégorie & remise",
            x = "Taux de remise", y = "Profit moyen") +
       theme_minimal()
   })
   
-  # Q14: Mise ?? jour des villes disponibles
+  # Q14: Mise à jour des villes disponibles
   observe({
     villes <- sort(unique(walmart$city))
     updateSelectInput(session, "ville", choices = villes, selected = villes[1])
@@ -110,8 +113,8 @@ server <- function(input, output, session) {
     ggplot(produits, aes(x = reorder(product_line, Total_Quantity), y = Total_Quantity)) +
       geom_col(fill = "skyblue") +
       coord_flip() +
-      labs(title = paste("Produits les plus achet??s ??", input$ville),
-           x = "Produit", y = "Quantit?? achet??e") +
+      labs(title = paste("Produits les plus achetès à", input$ville),
+           x = "Produit", y = "Quantité achetée") +
       theme_minimal()
   })
   
