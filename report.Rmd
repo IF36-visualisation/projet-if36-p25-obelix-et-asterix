@@ -1231,6 +1231,109 @@ Interprétation :
 
 
 
+## Shiny
+Afin de compléter notre analyse avec une approche plus dynamique, nous avons développé une application Shiny interactive qui permet de manipuler les filtres et de visualiser les résultats en temps réel. Voici un aperçu de certains graphiques générés via cette application.
+
+
+### Ventes par jour
+
+![Ventes par jour](data/shiny_image/image1.png)
+
+
+Cette figure montre la répartition des ventes totales de Walmart selon les jours de la semaine, pour la période sélectionnée via l’interface, ici : du 1er au 7 janvier 2019.
+
+On observe que Les ventes culminent le mardi, suivi par le dimanche et le samedi, ce qui suggère une activité plus intense en début et fin de semaine.
+Les jours mercredi à vendredi affichent des niveaux de ventes plus faibles, notamment le vendredi.
+
+La possibilité de choisir une autre période dans l’application Shiny permet à l’utilisateur d’explorer s’il s’agit d’un phénomène ponctuel ou d’une tendance récurrente. Ce type de visualisation interactive rend l’analyse temporelle des ventes bien plus flexible.
+
+### Relation entre la remise et le profit
+![](data/shiny_image/image2.png)
+Ce nuage de points explore la relation entre le taux de remise appliqué (Discount) et le profit généré (Profit). Sur la plage sélectionnée (28% à 74%), on observe une diminution nette du profit à mesure que la remise augmente. Cette tendance est confirmée par la droite de régression linéaire qui montre une pente négative marquée.
+
+Les points les plus denses sous l’axe zéro révèlent que les remises élevées sont souvent associées à des pertes. Cela suggère qu’au-delà d’un certain seuil (≈30%), les réductions ne stimulent plus la rentabilité, voire l’annulent totalement.
+
+L’interactivité du Shiny permet ici de tester différents scénarios : en ajustant la plage de remises, on peut visualiser comment la rentabilité évolue en fonction des politiques commerciales. C’est un outil précieux pour l’aide à la décision, en particulier dans les contextes de promotion ou de liquidation.
+
+###  Top Produits
+![](data/shiny_image/image3.png)
+
+Le graphique ci-dessus présente les produits générant le plus de profit dans le dataset Superstore. Grâce au curseur interactif, l’utilisateur peut choisir le nombre de produits affichés (ici 14), facilitant ainsi l’exploration ciblée des articles les plus rentables.
+
+On remarque que certains produits, comme le Canon imageCLASS 2200 Advanced Copier, affichent un profit très largement supérieur aux autres – dépassant les 25 000$. Cette distribution fortement asymétrique suggère que les bénéfices sont concentrés sur un nombre restreint d’articles à forte valeur ajoutée (imprimantes, relieuses, destructeurs de documents).
+
+Ce graphique met donc en évidence une dépendance au profit sur quelques produits, ce qui a des implications en gestion des stocks.
+
+### Profit Catégories
+![](data/shiny_image/image4.png)
+
+Dans cette version interactivement filtrée du graphique, nous avons volontairement exclu la catégorie « Furniture » afin de mieux observer les dynamiques spécifiques aux catégories « Office Supplies » et « Technology ».
+
+On note ici que même dans les tranches de remise les plus basses (0–20 %), les profits moyens sont relativement faibles. Dès que les remises dépassent 40 %, la catégorie Technology entre en perte nette significative, et cette tendance se prolonge au-delà de 60 % de remise. En revanche, la catégorie « Office Supplies » semble légèrement plus résiliente, bien que les marges y deviennent également négatives au-delà de 60 %.
+
+### Profits par Segment
+
+![](data/shiny_image/image5.png)
+
+Dans cette vue interactive, l'utilisateur a sélectionné un regroupement par Segment client (Consumer, Corporate, Home Office), ce qui permet de visualiser instantanément les contributions respectives de chaque segment au profit total.
+
+On observe que le segment Consumer génère de loin le profit le plus important, suivi par le segment Corporate, tandis que le segment Home Office reste en retrait.
+
+### Produits populaires
+
+![](data/shiny_image/image6.png)
+
+Dans cette section, nous avons utilisé Shiny pour explorer une question où l'interactivité est indispensable :
+
+Quels sont les produits les plus populaires dans chaque ville du réseau Walmart ?
+
+En effet, répondre à cette question avec un graphique statique (type ggplot2) nécessiterait soit de générer une figure différente pour chaque ville, soit de créer une figure complexe et illisible regroupant toutes les localités. Aucune de ces approches ne permet une exploration fluide des préférences locales.
+
+
+## Conclusion
+
+Ce projet d’analyse croisée entre les jeux de données Superstore et Walmart nous a permis d’explorer plusieurs aspects du comportement d’achat, de la rentabilité produit à la segmentation client, en passant par l’influence des remises et la dimension géographique.
+
+Nous avons pu identifier plusieurs tendances :
+
+- Les remises importantes ont souvent un effet négatif sur les profits, en particulier dans les **catégories sensibles comme la technologie**.
+- Les segments de clients “Consumer” génèrent le plus de profits, tandis que le segment “Home Office” est plus marginal.
+- Les produits les plus rentables ne sont pas nécessairement ceux les plus populaires, ce qui souligne l’importance d’une analyse croisée entre quantité vendue et rentabilité unitaire.
+- Grâce à l’intégration de Shiny, nous avons pu explorer des dynamiques locales (ville par ville) ou personnalisables, ce qui serait difficilement faisable dans un rapport statique.
+
+#### Difficultés rencontrées
+
+La fusion des deux jeux de données a été impossible en l’état, car leurs structures, colonnes et logiques sont très différentes. Nous avons donc opté pour une analyse parallèle.
+
+#### Pistes d’amélioration
+
+Intégrer une analyse temporelle plus approfondie, par exemple l’évolution mensuelle ou saisonnière des profits.
+
+### Contributions individuelles
+
+#### Chengxian ZHAO
+Ce projet m’a permis de consolider plusieurs compétences fondamentales en visualisation de données. J’ai appris à structurer une analyse exploratoire à partir de jeux de données réels, à manipuler et filtrer efficacement les données avec `dplyr`, puis à concevoir des visualisations claires et interprétables avec `ggplot2`. L’intégration de l’application Shiny m’a également permis de mettre en œuvre des visualisations interactives, en maîtrisant les logiques réactives de l’interface et la construction de tableaux de bord via `shinydashboard`.
+
+#### Jianghao LIU
+J’ai utilisé différentes techniques de visualisation afin de faire en sorte que la présentation des conclusions se rapproche au mieux de ce que nous souhaitions mettre en évidence.
+J’aurais aimé utiliser les compétences acquises dans le cours IF29 pour analyser et modéliser les données avant de les visualiser, afin de voir si cela aurait pu faire émerger des différences ou de nouvelles conclusions.
+
+
+## Annexe 
+
+Voici le détail des contributions :
+
+#### Chengxian ZHAO
+Question 3, 5, 9, 13, 17 
+
+Développement complet des fichiers `server.R` et `ui.R` pour l’application Shiny 
+
+Intégration de l’interface avec `shinydashboard`
+
+#### Jianghao LIU
+Au total, notre groupe a discuté d’une vingtaine de questions à analyser, et j’en ai traité cinq moi-même. 
+
+J’ai également participé à la conception et à la mise en place de l’application Shiny.
 
 
 
