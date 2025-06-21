@@ -186,7 +186,7 @@ ggcorrplot(cor_superstore, lab = TRUE, title = "Corrélation entre variables num
 
 
 <details> 
-<summary><strong> Question 1
+<summary><strong> Question 1: Quel est le genre des clients qui achetent le plus ?
 </strong></summary>
 
 1. Problématique
@@ -202,26 +202,26 @@ On pourrait s’attendre à ce qu’un genre dépense légèrement plus que l’
 
 Concernant les segments, il est possible que les consommateurs génèrent plus de ventes que les autres catégories de clients.
 
-- **Titre** : Dépenses par Genre (Walmart)
+- Titre : Dépenses par Genre (Walmart)
   
-- **Axes** :
-  - **X** : Genre (Female, Male)
-  - **Y** : Montant total des dépenses
+- Axes :
+  - X : Genre (Female, Male)
+  - Y : Montant total des dépenses
 
-- **Légende** : Genre (rose pour Female, bleu pour Male)
+- Légende : Genre (rose pour Female, bleu pour Male)
 
 - Outliers (points rouges)
 - Médiane (trait central du boxplot)
 
 **Graphique 2 (à droite) :**
 
-- **Titre** : Montant des ventes par Segment (Superstore)
+- Titre : Montant des ventes par Segment (Superstore)
   
-- **Axes** :
-  - **X** : Segment (Consumer, Corporate, Home Office)
-  - **Y** : Montant des ventes
+- Axes :
+  - X : Segment (Consumer, Corporate, Home Office)
+  - Y : Montant des ventes
 
-- **Légende** : Segment (couleurs différentes pour chaque segment)
+- Légende : Segment (couleurs différentes pour chaque segment)
   - Outliers(points rouges)
   - Médiane représentée (trait central du boxplot)
 
@@ -317,40 +317,7 @@ ggplot(walmart, aes(x = DayOfWeek, y = Total_Sales, group = 1)) +
   theme_minimal()
 ```
 **Analyse**
-
-En observant les graphiques des ventes par jour de la semaine, plusieurs constats se dégagent pour les deux jeux de données :
-
-**Superstore**
-
-- Lundi et vendredi affichent les plus hauts niveaux de ventes, dépassant les 420 000 $.
-
-- Mercredi est le jour le plus faible, avec un volume de ventes nettement en dessous des autres jours.
-
-- Samedi et dimanche présentent aussi des montants élevés, mais légèrement inférieurs à ceux du lundi et du vendredi.
-
-Interprétation :
-
-- Superstore vend principalement à des entreprises (B2B).
-
-- Les commandes sont fortes en début de semaine (lundi) pour anticiper l’activité, et en fin de semaine (vendredi) pour se préparer à la suivante.
-
-- Mercredi marque un creux logique : la majorité des besoins ont déjà été couverts.
-
-**Walmart**
-
-- Samedi est le jour où les ventes sont les plus élevées, suivi par mardi.
-
-- Dimanche reste aussi assez élevé, bien que légèrement en dessous du samedi.
-
-- Lundi à vendredi, les ventes sont relativement stables mais plus basses que le week-end.
-
-Interprétation :
-
-- Walmart vend aux particuliers (B2C).
-
-- Les gens achètent plus le week-end : ils ont plus de temps libre pour faire leurs courses.
-
-- En semaine, les ventes sont plus faibles, car les clients sont occupés par le travail ou l’école.
+L’analyse des ventes par jour de la semaine révèle des comportements distincts entre Superstore et Walmart. Pour Superstore, les ventes culminent le lundi et le vendredi, tandis que le mercredi enregistre un net creux. Cela s’explique par son modèle B2B : les entreprises passent commande en début de semaine pour lancer leur activité, et en fin de semaine pour anticiper la suivante. Les ventes du week-end restent élevées, mais légèrement inférieures. À l’inverse, Walmart, orienté B2C, enregistre ses meilleures ventes le samedi, suivi du mardi et du dimanche, reflet du comportement des particuliers qui profitent de leur temps libre le week-end pour faire leurs achats. En semaine, les ventes sont plus faibles, contraintes par les obligations professionnelles ou scolaires.
 </details>
 
 
@@ -1163,21 +1130,19 @@ walmart_total %>%
 
 **Analyse**
 
-Le graphique présente la note moyenne donnée par les clients en fonction du montant total payé :
+Les meilleures notes sont observées dans les tranches 100–200 $ (7.22) et 500–600 $ (7.28).
 
-- Les meilleures notes sont observées dans les tranches 100–200 $ (7.22) et 500–600 $ (7.28).
+Les tranches 200–500 $ restent globalement stables, avec des notes autour de 7.0.
 
-- Les tranches 200–500 $ restent globalement stables, avec des notes autour de 7.0.
-
-- En dessous de 100 $ et au-dessus de 600 $, les notes sont plus basses : respectivement 6.8 et 6.71, et 6.2 pour les valeurs manquantes.
+En dessous de 100 $ et au-dessus de 600 $, les notes sont plus basses : respectivement 6.8 et 6.71, et 6.2 pour les valeurs manquantes.
 
 Interprétation :
 
-- Il n’existe pas de relation linéaire forte entre montant payé et satisfaction.
+Il n’existe pas de relation linéaire forte entre montant payé et satisfaction.
 
-- Toutefois, une dépense modérée à élevée (100–600 $) semble associée à des notes légèrement meilleures.
+Toutefois, une dépense modérée à élevée (100–600 $) semble associée à des notes légèrement meilleures.
 
-- Cela peut s’expliquer par une meilleure expérience perçue lorsque le client paie pour des produits ou services de meilleure qualité.
+Cela peut s’expliquer par une meilleure expérience perçue lorsque le client paie pour des produits ou services de meilleure qualité.
 </details>
 
 
@@ -1206,27 +1171,7 @@ ggplot(walmart_time, aes(x = Hour, y = Total_Sales)) +
 ```
 **Analyse**
 
-À partir du graphique, on peut tirer les observations suivantes :
-
-Les pics de ventes se situent :
-
-- autour de 13h (34 723 $) → pause déjeuner.
-
-- vers 19h (39 700 $) → sortie du travail.
-
-Les ventes sont plus faibles :
-
-- Entre 16h et 17h, période intermédiaire entre travail et retour à la maison.
-
-- À partir de 20h, les achats diminuent fortement.
-
-Interprétation :
-
-- À midi, les clients profitent de leur pause pour faire quelques courses rapides.
-
-- En soirée, ils s’arrêtent au magasin en rentrant du travail.
-
-- Tôt le matin et tard le soir, l’activité baisse car les clients ne sont pas disponibles (sommeil, travail, repas).
+Le graphique met en évidence deux pics de ventes : autour de 13h, correspondant à la pause déjeuner, et vers 19h, à la sortie du travail. Les ventes sont plus faibles entre 16h et 17h, une période intermédiaire, et chutent nettement après 20h. Cela suggère que les clients font principalement leurs achats pendant leurs temps libres, notamment à midi et en fin de journée, tandis que l’activité est réduite tôt le matin et tard le soir, en raison d'autres contraintes comme le sommeil, les repas ou les horaires de travail.
 </details>
 
 
@@ -1318,6 +1263,8 @@ Ce projet m’a permis de consolider plusieurs compétences fondamentales en vis
 J’ai utilisé différentes techniques de visualisation afin de faire en sorte que la présentation des conclusions se rapproche au mieux de ce que nous souhaitions mettre en évidence.
 J’aurais aimé utiliser les compétences acquises dans le cours IF29 pour analyser et modéliser les données avant de les visualiser, afin de voir si cela aurait pu faire émerger des différences ou de nouvelles conclusions.
 
+#### Vigny Brayan TAKAM TALLA
+J’ai appris à bien structurer un projet d’analyse avec des questions claires, à faire parler les données à travers des graphiques et à rédiger un README compréhensible. J’aurais aussi trouvé intéressant que les deux jeux de données aient le même format et le même volume, car ça aurait permis de faire une vraie comparaison directe entre le e-commerce et la vente physique.
 
 ## Annexe 
 
@@ -1335,7 +1282,6 @@ Au total, notre groupe a discuté d’une vingtaine de questions à analyser, et
 
 J’ai également participé à la conception et à la mise en place de l’application Shiny.
 
-
-
-
+#### Vigny Brayan TAKAM TALLA
+Rédaction du README.md, création des questions 2, 8, 12, 19, 20, mise en page du rapport RMarkdown
 
